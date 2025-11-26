@@ -1,0 +1,16 @@
+name: dart_grpc_demo
+description: A fully functional gRPC client/server command-line application in Dart
+version: 1.0.0
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  grpc: ^3.2.4
+  protobuf: ^3.1.0
+  args: ^2.4.2
+
+dev_dependencies:
+  lints: ^2.1.0
+  build_runner: ^2.4.6
+  protoc_plugin: ^21.1.2
