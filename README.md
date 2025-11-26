@@ -252,11 +252,144 @@ message HelloReply {
 
 ### Testing
 
-To test the application:
+This project includes a comprehensive test suite covering:
+- **Unit tests** for individual service methods
+- **Integration tests** for end-to-end workflows
+- **Error handling tests** for failure scenarios
+- **Performance tests** for stress testing
+- **Edge case tests** for unusual inputs
 
-1. Start the server in one terminal
-2. Run the client with `--method all` to test all RPC patterns
+#### Running Tests
+
+**Run all tests:**
+```bash
+dart test
+```
+
+**Run tests with verbose output:**
+```bash
+dart test --reporter=expanded
+```
+
+**Run specific test file:**
+```bash
+dart test test/server_test.dart
+dart test test/integration_test.dart
+dart test test/error_handling_test.dart
+```
+
+**Run tests matching a pattern:**
+```bash
+dart test --name "unary"
+dart test --name "streaming"
+```
+
+**Run tests with coverage:**
+```bash
+dart test --coverage=coverage
+dart pub global activate coverage
+dart pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --report-on=lib
+```
+
+#### Test Structure
+
+```
+test/
+├── test_helpers.dart         # Shared test utilities and helpers
+├── server_test.dart           # Unit tests for server methods
+├── integration_test.dart      # End-to-end integration tests
+└── error_handling_test.dart   # Error scenarios and recovery tests
+```
+
+#### Test Coverage
+
+The test suite includes:
+
+**Server Tests** (test/server_test.dart):
+- ✓ Unary RPC with various inputs (empty, special chars, unicode, long strings)
+- ✓ Server streaming with cancellation support
+- ✓ Client streaming with single/multiple/empty streams
+- ✓ Bidirectional streaming with rapid messages
+- ✓ Server lifecycle (start, stop, restart)
+- ✓ Multiple concurrent clients
+
+**Integration Tests** (test/integration_test.dart):
+- ✓ Full workflow testing (all RPC patterns in sequence)
+- ✓ Concurrent operations from multiple clients
+- ✓ Stress testing (100+ concurrent calls)
+- ✓ Mixed workload scenarios
+- ✓ Large payload handling (10KB+ messages)
+- ✓ Long-running streams (50+ messages)
+- ✓ Performance benchmarks
+- ✓ Message ordering verification
+- ✓ Edge cases (empty strings, unicode, emojis, whitespace)
+
+**Error Handling Tests** (test/error_handling_test.dart):
+- ✓ Connection failures (non-existent server, invalid host)
+- ✓ Server shutdown during active calls
+- ✓ Stream cancellations and interruptions
+- ✓ Timeout handling
+- ✓ Resource cleanup and leak prevention
+- ✓ Recovery scenarios (reconnection after failure)
+- ✓ Concurrent error scenarios
+
+#### Example Test Output
+
+```bash
+$ dart test --reporter=expanded
+
+00:00 +0: loading test/server_test.dart
+00:00 +0: loading test/integration_test.dart
+00:00 +0: loading test/error_handling_test.dart
+
+GreeterService - Unary RPC sayHello returns correct greeting for single name
+00:01 +1: GreeterService - Unary RPC sayHello handles empty name
+00:01 +2: GreeterService - Unary RPC sayHello handles special characters
+...
+
+End-to-End Integration Tests full workflow: unary -> server stream -> client stream -> bidirectional
+00:05 +25: End-to-End Integration Tests concurrent operations from multiple clients
+...
+
+Connection Error Handling client fails to connect to non-existent server
+00:08 +45: Connection Error Handling client handles server shutdown during unary call
+...
+
+00:15 +89: All tests passed!
+```
+
+#### Manual Testing
+
+For manual testing:
+
+1. Start the server in one terminal:
+   ```bash
+   dart run bin/server.dart
+   ```
+
+2. Run the client with `--method all` to test all RPC patterns:
+   ```bash
+   dart run bin/client.dart --method all --name YourName
+   ```
+
 3. Monitor server logs for incoming requests
+
+#### Continuous Integration
+
+To set up CI/CD, add this to your workflow:
+
+```yaml
+name: Tests
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dart-lang/setup-dart@v1
+      - run: dart pub get
+      - run: dart test
+```
 
 ## Common Issues
 
